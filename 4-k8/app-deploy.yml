@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  labels:
+    app: mongo
+spec:
+  ports:
+  - port: 27017
+    name: http
+  selector:
+    app: mongo
+--- # create the mongodb database
+
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: zfarik/mongodb
+          ports:
+            - containerPort: 27017
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongovolume
+      volumes:
+        - name: mongovolume
+          persistentVolumeClaim:
+            claimName: mongo-claim
+--- # indicates it's a new file
+apiVersion: apps/v1
+
+kind: Deployment
+
+
+metadata:
+  name: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: zfarik/fatapp
+          ports:
+            - containerPort: 81
+          imagePullPolicy: IfNotPresent
+--- # indicates it's a new file
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: app-svc
+  name: default
+spec:
+  selector:
+    app: app
+  ports:
+  - port: 81
+    targetPort: 3000
+    nodePort: 30000
+    protocol: TCP
+  selector:
+    app: app
+  sessionAffinity: None
+  type: LoadBalancer

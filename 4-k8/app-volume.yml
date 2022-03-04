@@ -1,0 +1,25 @@
+--- # create the volume for mongo to connect to via the mongo claim
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongovolume
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 150Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+--- # volume claimer so mongo can access the volume
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi

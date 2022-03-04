@@ -133,11 +133,14 @@ sudo pacman -S minikube kubectl conntrack-tools
 #### Launching minikube
 - Change to root user `sudo -i`
 - Start Minikube
-- We are going to use the –vm-driver=none switch.
+- We are going to use the `–vm-driver=none`switch.
 - The rationale is we don’t want to install a Hypervisor like VirtualBox on the AWS instance, we just want minikube to run using the host
+- Install conntrack-tools as root too `pacman -S conntrack-tools`
 - Start command `minikube start --vm-driver=none`
 - Status check `minikube status`
-- `kubectl get svc`
+- Cluster status `kubectl get svc` 
+
+
 - Expected output
 ```
 minikube
@@ -159,3 +162,12 @@ how does it benefit the business
 k8 architecture - create a diagram or google it to add to your repo to talk though the architecture
 what is self healing with k8
 K8 roll back - how to use it
+
+#### Implementing a K8
+- create deplyment for our nginx image 
+- create 3 pods
+- `kubectl get name-service`
+- `kubectl create -f file.yml` starts a container
+- `kubectl delete <whatever you want to delete>` deploy deploy-name; service...
+- `kubectl delete deploy node` delete running pods from a deployment
+- `kubectl delete pod <id>` delete one pod

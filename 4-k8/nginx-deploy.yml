@@ -1,0 +1,52 @@
+---
+#k8 YML file
+#create deplyment for our nginx image 
+#create 3 pods
+#kubectl get name-service
+#kubectl create -f file.yml
+
+
+apiVersion: apps/v1
+kind: Deployment #pod, service, replica-set, asg
+
+metadata:
+  name: node
+
+spec:
+  #labesl and selectors are communication channels between our microservices
+  selector:
+    matchLabels:
+      app: nginx #give it a name, so that we can reference it later 
+                    #and allow other services to connect to it
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:  
+      containers:
+        - name: nginx
+          image: kbachir/karim_nginx_test
+
+          ports:
+            - containerPort: 80
+
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: nginx-svc
+    namespace: default
+
+spec:
+  selector:
+    app: nginx
+  type: NodePort
+  ports:
+    - nodePort: 30000
+      port: 80
+      protocol: TCP
+      targetPort: 80
